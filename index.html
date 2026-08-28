@@ -4,19 +4,198 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/esukuma-zero/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="小学生向けの、ブラウザですぐ遊べる短時間ローマ字タイピングゲーム。" />
-    <title>エスクマゼロ - タイピング</title>
-    <script type="module" crossorigin src="/esukuma-zero/assets/index-BWhOdMJ7.js"></script>
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/Geometry-CBNUORcA.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/RenderTargetSystem-DjqxjTXv.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/getTextureBatchBindGroup-DI8FXk2j.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/canvasUtils-B2xdkoUv.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/CanvasRenderer-BDpw4wGd.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/CanvasPool-DmwdbaEY.js">
-    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/FilterSystem-CruiVk-f.js">
-    <link rel="stylesheet" crossorigin href="/esukuma-zero/assets/index-D59Fb113.css">
+    <meta
+      name="description"
+      content="小学生向けの、ブラウザですぐ遊べる短時間学習ゲーム。タイピング・さんすう・キーれんしゅうで楽しく練習できます。"
+    />
+    <meta name="theme-color" content="#315448" />
+    <title>エスクマゼロ v0.1.0 - ブラウザですぐ遊べる学習ゲーム</title>
+    <style>
+      /* ガワの初期表示。style.css の読込前でも崩れないようインラインに置く（FOUC 回避）。 */
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        display: grid;
+        place-items: center;
+        background: linear-gradient(180deg, #dff3f0 0%, #f4e5bd 58%, #315448 100%);
+        font-family: system-ui, 'Yu Gothic', 'Hiragino Sans', sans-serif;
+        color: #12384f;
+      }
+      #app {
+        display: grid;
+        place-items: center;
+        min-height: 100svh;
+        padding: 12px;
+      }
+      /* ローダーと noscript カードは .game-canvas と同じ枠（16:9）に収めてレイアウトのガタつきを防ぐ。 */
+      .boot-screen {
+        display: grid;
+        place-items: center;
+        width: min(1280px, calc(100vw - 24px), calc((100svh - 24px) * 16 / 9));
+        max-height: calc(100svh - 24px);
+        aspect-ratio: 16 / 9;
+        border-radius: 10px;
+        border: 3px solid #315448;
+        box-shadow: 0 18px 40px rgb(31 61 52 / 24%);
+        background:
+          radial-gradient(circle at 50% 18%, rgb(255 255 255 / 78%) 0%, transparent 38%),
+          linear-gradient(
+            180deg,
+            #dff3f0 0%,
+            #8fd3e8 44%,
+            #f4e5bd 44%,
+            #e1c98b 80%,
+            #315448 80%,
+            #315448 100%
+          );
+      }
+      .boot-card {
+        display: grid;
+        gap: 18px;
+        justify-items: center;
+        min-width: min(520px, 84%);
+        max-width: 80%;
+        padding: 24px;
+        border: 2px solid rgb(49 84 72 / 72%);
+        border-radius: 22px;
+        background: rgb(247 237 207 / 94%);
+        box-shadow: 0 12px 28px rgb(31 61 52 / 18%);
+        text-align: center;
+      }
+      .boot-dots {
+        display: flex;
+        gap: 12px;
+      }
+      .boot-dots span {
+        width: 16px;
+        height: 16px;
+        border: 3px solid #315448;
+        border-radius: 3px 3px 7px 7px;
+        background: #8fd3e8;
+        animation: boot-bob 0.9s ease-in-out infinite;
+      }
+      .boot-dots span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .boot-dots span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .boot-title {
+        margin: 0;
+        font-size: clamp(20px, 4vw, 30px);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+      }
+      .boot-sub {
+        margin: 0;
+        font-size: clamp(13px, 2.4vw, 16px);
+        line-height: 1.7;
+        opacity: 0.85;
+      }
+      .boot-actions {
+        display: grid;
+        gap: 12px;
+        justify-items: stretch;
+        min-width: min(320px, 72vw);
+      }
+      .boot-button {
+        min-height: 58px;
+        padding: 10px 24px;
+        border: 3px solid #315448;
+        border-radius: 14px;
+        font: inherit;
+        font-size: clamp(18px, 3vw, 24px);
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .boot-button-primary {
+        background: #ffd84a;
+        color: #173c33;
+        box-shadow: 0 5px 0 #9a6a1d;
+      }
+      .boot-button-secondary {
+        background: #fffdf3;
+        color: #315448;
+      }
+      .boot-button:focus-visible {
+        outline: 5px solid #176be8;
+        outline-offset: 4px;
+      }
+      @keyframes boot-bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boot-dots span {
+          animation: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/esukuma-zero/assets/index-CE4giCaH.js"></script>
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/Geometry-Cpm6ZvGD.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/GCManagedHash-mRnmiZBx.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/getTextureBatchBindGroup-CPxH9Ala.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/ImageSource-B51t8cMv.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/GraphicsContext-V4xF0Hrj.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/Cache-D9vRxm9K.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/Filter-7aiuJMkD.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/canvasUtils-C8AqDiNk.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/CanvasPool-Dq5ywlQU.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/FilterSystem-2m7S30ly.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/RenderTargetSystem-MtmktvkE.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/CanvasRenderer-C20Z7Pvo.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/BitmapFont-Fp7MCjbU.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/commonViewParts-DtVB6AOC.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/keyPracticeGameState-AcYwyuJn.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/keyPracticeResultContract-Ch1HVODy.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/mathGameplayFeedback-CNy7Y4eA.js">
+    <link rel="modulepreload" crossorigin href="/esukuma-zero/assets/uiLayout-BDlhMcUk.js">
+    <link rel="stylesheet" crossorigin href="/esukuma-zero/assets/index-C4hLWWsL.css">
   </head>
   <body>
-    <div id="app"></div>
+    <div
+      id="app"
+      data-load-phase="initial"
+      data-load-status="loading"
+      data-load-target="title-shell"
+      data-load-attempt="1"
+    >
+      <div id="boot-loader" class="boot-screen" role="status" aria-live="polite">
+        <div class="boot-card">
+          <div class="boot-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="boot-title">よみこみちゅう…</p>
+        </div>
+      </div>
+      <noscript>
+        <!-- JS 無効時はローダーを隠し、案内カードだけを見せる。 -->
+        <style>
+          #boot-loader {
+            display: none;
+          }
+        </style>
+        <div class="boot-screen">
+          <div class="boot-card">
+            <p class="boot-title">ブラウザの せっていを かくにんしてね</p>
+            <p class="boot-sub">
+              このゲームで あそぶには JavaScript が ひつようです。<br />
+              ブラウザの設定で JavaScript を有効にすると遊べます。
+            </p>
+          </div>
+        </div>
+      </noscript>
+    </div>
   </body>
 </html>

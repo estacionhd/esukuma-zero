@@ -1,9 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
-  <title id="title">Esukuma Zero typing game icon</title>
-  <desc id="desc">A blue ocean wave and a white keyboard key for the typing game.</desc>
-  <rect width="64" height="64" rx="14" fill="#60c9ff"/>
-  <path fill="#1595d6" d="M0 37c8-5 15-7 24-4 7 2 12 7 20 7 7 0 13-3 20-9v33H0z"/>
-  <path fill="#ffffff" d="M0 45c8-4 16-5 25-2 7 3 13 7 22 5 6-1 11-4 17-9v7c-6 5-12 8-19 9-8 1-15-2-23-5-8-3-15-2-22 3z" opacity=".92"/>
-  <rect x="15" y="13" width="34" height="27" rx="7" fill="#fffdf3" stroke="#1e4b66" stroke-width="4"/>
-  <path fill="#1e4b66" fill-rule="evenodd" d="M32 17 20 36h7l1.8-4h6.4l1.8 4h7zm0 8 2 4h-4z" clip-rule="evenodd"/>
+  <title id="title">エスクマゼロの列車アイコン</title>
+  <desc id="desc">深緑の背景に、クリーム色の正面列車と線路を描いたアイコン。</desc>
+  <rect width="64" height="64" rx="14" fill="#315448"/>
+  <path d="M18 15c0-4 3-7 7-7h14c4 0 7 3 7 7v27c0 4-3 7-7 7H25c-4 0-7-3-7-7z" fill="#f4dfaa"/>
+  <path d="M22 18c0-3 2-5 5-5h10c3 0 5 2 5 5v10H22z" fill="#8fd3e8"/>
+  <path d="M32 13v15M22 30h20" stroke="#315448" stroke-width="4"/>
+  <circle cx="25" cy="38" r="3" fill="#f5a623"/>
+  <circle cx="39" cy="38" r="3" fill="#f5a623"/>
+  <path d="m22 49-7 9m27-9 7 9M20 55h24" fill="none" stroke="#f4dfaa" stroke-linecap="round" stroke-width="4"/>
 </svg>
